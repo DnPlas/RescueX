@@ -28,18 +28,5 @@ class Buttons(object):
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         loopQuit = True
-                
-        # other event tests, but polling seems to work better in main loop
-        # if event.type == pygame.JOYBUTTONDOWN:
-        #    print("joy button down")
-        # if event.type == pygame.JOYBUTTONUP:
-        #    print("joy button up")
-        # if event.type == pygame.JOYBALLMOTION:
-        #    print("joy ball motion")
-        # axis motion is movement of controller
-        # dominates events when used
-        # if event.type == pygame.JOYAXISMOTION:
-            # print("joy axis motion")
-
 #pygame.quit()
 #sys.exit()
