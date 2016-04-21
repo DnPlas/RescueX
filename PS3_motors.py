@@ -87,12 +87,18 @@ try:
             elif event.axis == 3:
               RightTrack = event.value
               UpdateMotors = 1
+            elif event.axis == 11:
+              Lift = event.value
+              print '%d' %Lift
+              UpdateMotors = 1
 
             # Check if we need to update what the motors are doing
             if UpdateMotors:
 
               # Check how to configure the left motor
-
+              if (Lift == 1)
+                  A0 = False
+                  A1 = True
               # Move forwards
               if (RightTrack > threshold):
                   A0 = False
