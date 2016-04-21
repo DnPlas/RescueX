@@ -54,7 +54,7 @@ threshold = 0.60
 
 LeftTrack = 0
 RightTrack = 0
-
+x=0
 # Configure the motors to match the current settings.
 
 def setmotors():
@@ -78,6 +78,7 @@ try:
         events = pygame.event.get()
         for event in events:
           UpdateMotors = 0
+          print events
 
           # Check if one of the joysticks has moved
           if event.type == pygame.JOYAXISMOTION:
@@ -87,26 +88,34 @@ try:
             elif event.axis == 3:
               RightTrack = event.value
               UpdateMotors = 1
-            elif event.axis == 11:
-              Lift = event.value
-              print '%d' %Lift
-              UpdateMotors = 1
+          if event.type == pygame.JOYBUTTONDOWN:
+              print 'Etapa 1'
+              if event.button == 11:
+                  x = 11
+                  print x 
+                  UpdateMotors = 1
+          elif event.type == pygame.JOYBUTTONUP:
+              print 'Etapa 1'
+              if event.button == 11:
+                  x = 0
+                  print x 
+                  UpdateMotors = 1
 
             # Check if we need to update what the motors are doing
-            if UpdateMotors:
-
+          if UpdateMotors:
+              if (x==11):
+                  A0 = False
+                  A1 = True
+                  print 'holi'
               # Check how to configure the left motor
-              if (Lift == 1)
-                  A0 = False
-                  A1 = True
               # Move forwards
-              if (RightTrack > threshold):
-                  A0 = False
-                  A1 = True
+              #if (RightTrack > threshold):
+              #    A0 = False
+              #    A1 = True 
               # Move backwards
-              elif (RightTrack < -threshold):
-                  A0 = True
-                  A1 = False
+              #elif (RightTrack < -threshold):
+              #    A0 = True
+              #    A1 = False
               # Stopping
               else:
                   A0 = False
