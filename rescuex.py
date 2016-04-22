@@ -34,36 +34,34 @@ j.init()
 print 'Welcome to RescueX. Initialized Joystick : %s' % j.get_name()
 
 #-----ASSIGNING VARIABLES-----
-MotorA0 = 16 
+MotorA0 = 16 #H-Bridge inputs for the left pair of motors
 MotorA1 = 18
-MotorAE = 22
 
-MotorB0 = 29
+MotorB0 = 29 #H-Bridge inputs for the right pair of motors
 MotorB1 = 31
-MotorBE = 19
 
-Servo1 = 12
-Servo2 = 10
-Servo3 = 8
-Servo4 = 36
+Servo1 = 12 #Clamp servo
+Servo2 = 10 #Rack gear clamp
+Servo3 = 8 #Positioning clamp servo
+Servo4 = 36 #Lifting crane servo
  
-value = 0
-max_val = 8
-min_val = 3 
+value = 0 #Control variable
+max_val = 8 #This is the maximum duty cycle for every servo
+min_val = 3 #Minimim duty cycle for every servo
 
-A0 = False
-A1 = False
-B0 = False
-B1 = False
+A0 = False #Initialise variable in 0
+A1 = False #Initialise variable in 0
+B0 = False #Initialise variable in 0
+B1 = False #Initialise variable in 0
 
-threshold = 0.60
-LeftTrack = 0
+threshold = 0.60 #Control variable. Pygame takes the value of a joystick and compares it to a treshold so it can establish a set of values where the joystick will be detected as up or down movement
+LeftTrack = 0 #Control variables: flags that permit access to an specific function
 RightTrack = 0
 x = 0
 y = 0
 
 #-----SETTING GPIOS DIRECTION-----
-GPIO.setup(MotorA0,GPIO.OUT)
+GPIO.setup(MotorA0,GPIO.OUT) #Sets GPIOs as outputs
 GPIO.setup(MotorA1,GPIO.OUT)
 GPIO.setup(MotorAE,GPIO.OUT)
 
@@ -77,24 +75,24 @@ GPIO.setup(Servo3, GPIO.OUT)
 GPIO.setup(Servo4, GPIO.OUT)
 
 #-----PWM SETUP-----
-S1 = GPIO.PWM(Servo1, 50)
+S1 = GPIO.PWM(Servo1, 50) #Establishes an assignment to a variable with the module PWM (set), number of pin (ServoX) and frequency (50 Hz)
 S2 = GPIO.PWM(Servo2, 50)
 S3 = GPIO.PWM(Servo3, 50)
 S4 = GPIO.PWM(Servo4, 50)
 
 #-----GPIOS OFF-----
-GPIO.output(MotorA0, A0)
+GPIO.output(MotorA0, A0) #Start all GPIOs in zero so they do not move during the processing
 GPIO.output(MotorA1, A1)
 GPIO.output(MotorAE, False)
 GPIO.output(MotorBE, False)
 GPIO.output(MotorB0, B0)
 GPIO.output(MotorB1, B1)
-S1.start(min_val)
+S1.start(min_val) #Starts servos at their minimum duty cycle
 S2.start(min_val)
 S3.start(min_val)
 S4.start(0)
 
-#This function gives a value to the GPIO which will control the motors
+#This function gives a value to a certain GPIO, then it sends it to an H-bridge so a combination of digital values are written in the H-bride.
 def setmotors():
         GPIO.output(MotorA0, A0)
         GPIO.output(MotorA1, A1)
@@ -124,7 +122,7 @@ try:
                     RightTrack = event.value
                     UpdateMotors = 1
           
-            #L1 & L2: Gets the value of triggers L1 and R1 from the Playstation 3 controller
+            #L1 & L2: Gets the value of triggers R1 from the Playstation 3 controller
             if event.type == pygame.JOYBUTTONDOWN: 
                 if event.button == 11:
                     x = 11
@@ -133,6 +131,8 @@ try:
                 if event.button == 11:
                     x = 0
                     UpdateMotors = 1
+            
+            #L1 & L2: Gets the value of triggers L1 from the Playstation 3 controller
             
             if event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 10:
@@ -166,9 +166,10 @@ try:
                     y = 15
                     UpdateMotors = 1
 
+            #Main loop. Depending on the pressed button, Raspberry Pi will send a digital output to any of the specified GPIO
             if UpdateMotors:
-
-              if (y==12):
+            
+              if (y==12): #When triangle is pressed, you can move a servo (S1) to rotate clockwise (R1) or counter clockwise(L1)
                   if (j.get_button(11) and value < max_val):
                       value = value + 0.5 
                       S1.ChangeDutyCycle(value)
@@ -176,7 +177,7 @@ try:
                       value = value - 0.5
                       S1.ChangeDutyCycle(value)
  
-              if (y==13):
+              if (y==13): #When circle is pressed, you can move a servo (S2) to to rotate clockwise (R1) or counter clockwise(L1)
                   if (j.get_button(11) and value < max_val):
                       value = value + 0.5
                       S2.ChangeDutyCycle(value)
@@ -184,15 +185,15 @@ try:
                       value = value - 0.5
                       S2.ChangeDutyCycle(value)
 
-              if (y==14):
-                  if (j.get_button(11) and value < max_val):
+              if (y==14): #When x is pressed, you can move a servo (S3) to rotate clockwise (R1) or counter clockwise(L1)
+o                 if (j.get_button(11) and value < max_val):
                       value = value + 0.5
                       S3.ChangeDutyCycle(value)
                   elif (j.get_button(10) and value > min_val):
                       value = value - 0.5
                       S3.ChangeDutyCycle(value)
 
-              if (y==15):
+              if (y==15): #When square is pressed, you can move a servo (S4) to rotate clockwise (R1) or counter clockwise (L1)
                   if (j.get_button(11)):
                       S4.ChangeDutyCycle(5)
                   elif (j.get_button(10)):
